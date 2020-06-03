@@ -4,22 +4,16 @@ from pprint import pprint
 import time
 import xlsxwriter
 import collections
+from concurrent.futures import ThreadPoolExecutor
 
+#GLOBALS
 CSVFILE = 'savings-plans.xls'
-
-REGIONS = ['eu-west-1']
-TYPES = ['Linux']
-SPPRICES = ['1YALL']  # add 1YPA and 3YPA for partials
-TENANCY = ['Shared']
-
 REGIONS = ['eu-west-1', 'eu-west-2']
 TYPES = ['Windows', 'RHEL', 'Linux']
 SPPRICES = ['1YALL', '1YNO', '3YALL', '3YNO']  # add 1YPA and 3YPA for partials
 TENANCY = ['Shared', 'Dedicated']
 
-
-
-
+#FIXED URL
 BASEURL = "https://view-publish.us-west-2.prod.pricing.aws.a2z.com/pricing/2.0/meteredUnitMaps/computesavingsplan/USD/current/compute-savings-plan-ec2"
 ENDURL = "index.json?timestamp="
 
@@ -27,35 +21,41 @@ ENDURL = "index.json?timestamp="
 def construct_urls():
     URLS = []
     TIMESTAMP = str(int(time.time()))
-    for R in REGIONS:
-        if R == "eu-west-1":
+    for _R in REGIONS:
+        if _R == "eu-west-1":
             R = "EU%20(Ireland)"
-        if R == "eu-west-2":
+        if _R == "eu-west-2":
             R = "EU%20(London)"
         for T in TYPES:
-            for S in SPPRICES:
-                if S == "1YALL":
+            for _S in SPPRICES:
+                if _S == "1YALL":
                     S = '1%20year/All%20Upfront'
-                if S == "1YNO":
+                if _S == "1YNO":
                     S = '1%20year/No%20Upfront'
-                if S == "1YPA":
+                if _S == "1YPA":
                     S = '1%20year/Partial%20Upfront'
-                if S == "3YALL":
+                if _S == "3YALL":
                     S = '3%20year/All%20Upfront'
-                if S == "3YNO":
+                if _S == "3YNO":
                     S = '3%20year/No%20Upfront'
-                if S == "3YPA":
+                if _S == "3YPA":
                     S = '3%20year/Partial%20Upfront'
                 for X in TENANCY:
-                    URLS.append("{}/{}/{}/{}/{}/{}{}".format(BASEURL, S, R, T, X, ENDURL, TIMESTAMP))
-    pprint(URLS)
+
+                    URLS.append((_R, "{}/{}/{}/{}/{}/{}{}".format(BASEURL, S, R, T, X, ENDURL, TIMESTAMP)))
+    #pprint(URLS)
     return URLS
 
 
 def get_json(in_url):
+
     time.sleep(1)
+
+    (_region, in_url) = in_url
+
     response = requests.get(in_url)
     working_data = response.json()
+
     working_data = working_data['regions']
     for i in working_data:
         region = i
@@ -148,26 +148,11 @@ def xlwriter(response_dict):
 
     workbook.close()
 
-
-
 working_urls = construct_urls()
 response_dict = collections.OrderedDict()
-for i in working_urls:
-    i = i + str(int(time.time()))
-    get_json(i)
+current_region = None
+
+with ThreadPoolExecutor() as executor:
+    executor.map(get_json, working_urls, timeout=30)
 
 xlwriter(response_dict)
-exit()
-
-create_new_csv()
-
-def create_new_csv():
-    with open(CSVFILE, mode='w', newline='') as sp_file:
-        sp_writer = csv.writer(sp_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        sp_writer.writerow(["SP-ITEM", "SP-RATE", "OD-RATE"])
-
-
-def append_csv(line):
-    with open(CSVFILE, mode='a', newline='') as sp_file:
-        sp_writer = csv.writer(sp_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        sp_writer.writerow(line)
