@@ -23,37 +23,27 @@ def construct_urls():
     URLS = []
     TIMESTAMP = str(int(time.time()))
     for _R in REGIONS:
-        if _R == "eu-west-1":
-            R = "EU%20(Ireland)"
-        if _R == "eu-west-2":
-            R = "EU%20(London)"
+        for k,v in aws.regions.items():
+            if _R == k:
+                R = v
+
         for T in TYPES:
             for _S in SPPRICES:
-                if _S == "1YALL":
-                    S = '1%20year/All%20Upfront'
-                if _S == "1YNO":
-                    S = '1%20year/No%20Upfront'
-                if _S == "1YPA":
-                    S = '1%20year/Partial%20Upfront'
-                if _S == "3YALL":
-                    S = '3%20year/All%20Upfront'
-                if _S == "3YNO":
-                    S = '3%20year/No%20Upfront'
-                if _S == "3YPA":
-                    S = '3%20year/Partial%20Upfront'
+                _S = list(_S)
+                for k,v in aws.commit.items():
+                    if _S[2] == k:
+                        S = "{} year/{}".format(str(_S[0]),v)
+                
                 for X in TENANCY:
-
                     URLS.append((_R, "{}/{}/{}/{}/{}/{}{}".format(BASEURL, S, R, T, X, ENDURL, TIMESTAMP)))
+
     #pprint(URLS)
     return URLS
 
 
 def get_json(in_url):
-
     time.sleep(1)
-
     (_region, in_url) = in_url
-
     response = requests.get(in_url)
     working_data = response.json()
 
@@ -64,28 +54,25 @@ def get_json(in_url):
     for k, v in working_data[region].items():
         entry = {}
         rate = v
+        tenancy = rate['ec2:Tenancy']
         instance = rate['ec2:InstanceType']
         spregion = rate['ec2:Location']
-        if spregion == "EU (Ireland)":
-            spregion = "eu-west-1"
-        if spregion == "EU (London)":
-            spregion = "eu-west-2"
-        operatingsystem = rate['ec2:OperatingSystem']
-        if operatingsystem == "Linux":
-            operatingsystem = "Linux/UNIX"
-        if operatingsystem == "RHEL":
-            operatingsystem = "Red Hat Enterprise Linux"
-        tenancy = rate['ec2:Tenancy']
+        for k,v in aws.regions.items():
+            if spregion == v:
+                spregion = k
 
+        operatingsystem = rate['ec2:OperatingSystem']
+        for k,v in aws.os.items():
+            if operatingsystem == v:
+                operatingsystem = k
+    
         commityear = rate['LeaseContractLength']
-        committime = rate['PurchaseOption']
-        if committime == "All Upfront":
-            committime = "A"
-        if committime == "Partial Upfront":
-            committime = "P"
-        if committime == "No Upfront":
-            committime = "N"
-        commitcode = commityear + committime
+        commitamount = rate['PurchaseOption']
+        for k,v in aws.commit.items():
+            if commitamount  == v:
+                commitamount  = k
+
+        commitcode = commityear + commitamount
 
         sprate = rate['price']
         odrate = rate['ec2:PricePerUnit']
