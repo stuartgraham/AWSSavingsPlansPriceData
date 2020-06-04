@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 # SETTINGS
 # CSVFILE: Path to CSV File
 CSVFILE = 'savings-plans.xlsx'
-CSV_PER_TAB = True
+CSV_PER_TAB = False
 # PLANLENGTH: 1 year, 3 years
 PLANLENGTH = [1,3]
 # PLANCOMMIT: [A]ll Upfront, [N]o Upfront, [P]artial Upfront                               
@@ -102,12 +102,19 @@ def get_json(in_url):
                  "savingper": "{:0.2f}".format(savingper)
                  }
 
-        if instance[0] not in response_dict:
-            response_dict[instance[0]] = collections.OrderedDict()
-            response_dict[instance[0]][entrykey] = entry
+        # Tabulate Excel if True
+        if CSV_PER_TAB == True:
+            xls_tab = instance[0]
         else:
-            response_dict[instance[0]][entrykey] = entry
-        
+            xls_tab = 'All'
+
+        if xls_tab not in response_dict:
+            response_dict[xls_tab] = collections.OrderedDict()
+            response_dict[xls_tab][entrykey] = entry
+        else:
+            response_dict[xls_tab][entrykey] = entry
+
+ 
 
 def xlwriter(response_dict):
     workbook = xlsxwriter.Workbook(CSVFILE)
