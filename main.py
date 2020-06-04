@@ -1,6 +1,5 @@
-import requests
-from pprint import pprint
 import time
+import requests
 import awsrefs as aws
 import xlsxwriter
 import collections
