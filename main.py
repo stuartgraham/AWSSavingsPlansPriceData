@@ -37,7 +37,7 @@ def construct_urls():
                 for X in TENANCY:
                     URLS.append((_R, "{}/{}/{}/{}/{}/{}{}".format(BASEURL, S, R, T, X, ENDURL, TIMESTAMP)))
 
-    #pprint(URLS)
+    print("Working on {} URLS".format(len(URLS)))
     return URLS
 
 
@@ -79,7 +79,7 @@ def get_json(in_url):
         spcode = "{}-{}-{}-{}-{}".format(instance, spregion, operatingsystem, tenancy, commitcode)
         savingper = ((float(odrate)-float(sprate))/float(odrate))*100
 
-        entrykey = instance+commitcode
+        entrykey = instance+spcode
         entry = {"instance": instance,
                 "region": spregion,
                  "os": operatingsystem,
@@ -95,7 +95,7 @@ def get_json(in_url):
             response_dict[instance[0]][entrykey] = entry
         else:
             response_dict[instance[0]][entrykey] = entry
-
+        
 
 def xlwriter(response_dict):
     workbook = xlsxwriter.Workbook(CSVFILE)
@@ -122,8 +122,6 @@ def xlwriter(response_dict):
         column = 0
 
         for _key, _value in value.items():
-            print(_key)
-            print(_value)
             worksheet.write(row, column, _value["instance"])
             worksheet.write(row, column + 1, _value["region"])
             worksheet.write(row, column + 2, _value["os"])
@@ -136,11 +134,14 @@ def xlwriter(response_dict):
 
     workbook.close()
 
-working_urls = construct_urls()
+def main():
+    working_urls = construct_urls()
+
+    with ThreadPoolExecutor() as executor:
+        executor.map(get_json, working_urls, timeout=30)
+
+    xlwriter(response_dict)
+
+# Main execution
 response_dict = collections.OrderedDict()
-current_region = None
-
-with ThreadPoolExecutor() as executor:
-    executor.map(get_json, working_urls, timeout=30)
-
-xlwriter(response_dict)
+main()
