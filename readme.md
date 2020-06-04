@@ -1,5 +1,5 @@
 # AWS Savings Plans Price Data
-Outputs to AWS Savings Plans Data to Microsoft Excel based on region, OS, tenancy and term parameters
+Outputs AWS Savings Plans Data to Microsoft Excel based on region, OS, tenancy and term parameters
 
 ### main.py
 Parameters
