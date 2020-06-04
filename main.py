@@ -2,12 +2,13 @@ import requests
 import csv
 from pprint import pprint
 import time
+import awsrefs as aws
 import xlsxwriter
 import collections
 from concurrent.futures import ThreadPoolExecutor
 
 #GLOBALS
-CSVFILE = 'savings-plans.xls'
+CSVFILE = 'savings-plans.xlsx'
 REGIONS = ['eu-west-1', 'eu-west-2']
 TYPES = ['Windows', 'RHEL', 'Linux']
 SPPRICES = ['1YALL', '1YNO', '3YALL', '3YNO']  # add 1YPA and 3YPA for partials
@@ -99,7 +100,7 @@ def get_json(in_url):
                  "commitcode": commitcode,
                  "odrate": "{:0.4f}".format(float(odrate)),
                  "sprate": sprate,
-                 "savingper": "{:0.2f}%".format(savingper)
+                 "savingper": "{:0.2f}".format(savingper)
                  }
 
         if instance[0] not in response_dict:
