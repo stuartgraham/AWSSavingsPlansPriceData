@@ -1,1 +1,4 @@
 *.xlsx
+Pipfile
+Pipfile.lock
+.idea/*

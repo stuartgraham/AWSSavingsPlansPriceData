@@ -1,5 +1,4 @@
 import requests
-import csv
 from pprint import pprint
 import time
 import awsrefs as aws
@@ -135,6 +134,10 @@ def xlwriter(response_dict):
     workbook.close()
 
 def main():
+    print("\nRegions - {}".format(', '.join(map(str, REGIONS))))
+    print("OS - {}".format(', '.join(map(str, TYPES))))
+    print("Tenancy - {}".format(', '.join(map(str, TENANCY))))
+    print("Commitment Types - {}".format(', '.join(map(str, SPPRICES))))
     working_urls = construct_urls()
 
     with ThreadPoolExecutor() as executor:
@@ -142,6 +145,8 @@ def main():
 
     xlwriter(response_dict)
 
-# Main execution
+start = time.time()
 response_dict = collections.OrderedDict()
 main()
+stop = time.time()
+print("\nRuntime {:0.2f}\n".format(stop-start))
