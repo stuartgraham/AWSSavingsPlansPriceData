@@ -27,6 +27,7 @@ END_URL = "index.json?timestamp="
 
 
 def get_terms():
+    '''Manipulates the PLAN_LENGTH and PLAN_COMMIT inputs'''
     global SP_TERMS
     terms = []
     for length in PLAN_LENGTH:
@@ -36,6 +37,7 @@ def get_terms():
     
 
 def construct_urls():
+    '''Builds URL set from input'''
     URLS = []
     TIMESTAMP = str(int(time.time()))
     START_URL = "{}{}".format(BASE_URL, MID_URLS[PLAN_TYPE.lower()])
@@ -63,6 +65,7 @@ def construct_urls():
 
 
 def get_json(in_url):
+    ''' Parse json to ordered dict '''
     response = requests.get(in_url)
     if response.status_code != 200:
         print("ERROR : Could not connect to {}".format(in_url))
@@ -123,9 +126,9 @@ def get_json(in_url):
 
 
 def xlwriter(response_dict):
+    ''' Write to XSLX '''
     xls_file = "{}-savings-plans.xlsx".format(PLAN_TYPE.lower())
     workbook = xlsxwriter.Workbook(xls_file)
-
     bold = workbook.add_format({'bold': True})
     money = workbook.add_format({'num_format': '$#,##0.0000'})
 
@@ -158,10 +161,11 @@ def xlwriter(response_dict):
             if LOOKUP_CODE == True:
                 worksheet.write(row, 8, v["spcode"])
             row += 1
-
     workbook.close()
 
+
 def main():
+    ''' Main entry point of the app '''
     get_terms()
     print("\nRegions - {}".format(', '.join(map(str, REGIONS))))
     print("OS - {}".format(', '.join(map(str, OSES))))
@@ -174,8 +178,11 @@ def main():
 
     xlwriter(response_dict)
 
-start = time.time()
-response_dict = collections.OrderedDict()
-main()
-stop = time.time()
-print("\nRuntime {:0.2f}s\n".format(stop-start))
+
+if __name__ == "__main__":
+    ''' This is executed when run from the command line '''
+    start = time.time()
+    response_dict = collections.OrderedDict()
+    main()
+    stop = time.time()
+    print("\nRuntime {:0.2f}s\n".format(stop-start))
