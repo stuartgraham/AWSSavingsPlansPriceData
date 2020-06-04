@@ -8,9 +8,13 @@ import collections
 from concurrent.futures import ThreadPoolExecutor
 
 # SETTINGS
+# CSVFILE: Path to CSV File
 CSVFILE = 'savings-plans.xlsx'
-PLANLENGTH = [1,3]                              # 1 year, 3 years
-PLANCOMMIT = ['A','N']                          # [A]ll Upfront, [N]o Upfront, [P]artial Upfront
+# PLANLENGTH: 1 year, 3 years
+PLANLENGTH = [1,3]
+# PLANCOMMIT: [A]ll Upfront, [N]o Upfront, [P]artial Upfront                               
+PLANCOMMIT = ['A','N']
+# REGION: https://github.com/adv4000/aws-region-codes            
 REGIONS = ['eu-west-1', 'eu-west-2']
 TYPES = ['Windows', 'RHEL', 'Linux']
 TENANCY = ['Shared', 'Dedicated']
