@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 # SETTINGS
 # CSVFILE: Path to CSV File
 CSVFILE = 'savings-plans.xlsx'
+CSV_PER_TAB = True
 # PLANLENGTH: 1 year, 3 years
 PLANLENGTH = [1,3]
 # PLANCOMMIT: [A]ll Upfront, [N]o Upfront, [P]artial Upfront                               
