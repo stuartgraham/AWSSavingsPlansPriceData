@@ -2,22 +2,19 @@
 Outputs AWS Savings Plans Data to Microsoft Excel based on region, OS, tenancy and term parameters
 
 ### main.py
-Parameters
-```sh
-CSVFILE = 'savings-plans.xlsx'
-CSV_PER_TAB = True
-LOOKUP_CODE = False
-PLANLENGTH = [1,3]                              # 1 year, 3 years
-PLANCOMMIT = ['A','N']                          # [A]ll Upfront, [N]o Upfront, [P]artial Upfront
-REGIONS = ['eu-west-1', 'eu-west-2']
-TYPES = ['Windows', 'RHEL', 'Linux']
-TENANCY = ['Shared', 'Dedicated']
-```
+Manipulate settings as needed
 
-| Settings | Inputs |
-| :----: | --- |
-| `CSVFILE` | xlsx file name e.g. `savings-plans.xlsx` |
-| `CSV_PER_TAB` | xlsx file name e.g. `True/False` |
+| Settings | Description | Inputs |
+| :----: | --- | --- |
+| `CSVFILE` | xlsx file name | `savings-plans.xlsx` |
+| `CSV_PER_TAB` | Per Instance Family price tabs | `True/False` |
+| `LOOKUP_CODE` | Concatenated code for VLOOKUP | `True/False` |
+| `PLANLENGTH` | Savings Plans Years | `[1,3]` |
+| `PLANCOMMIT` | Commitment [A]ll, [N]o, [P]artial Upfront | `['A','N','P']` |
+| `REGIONS` | AWS Region code | `['eu-west-1', 'eu-west-2']` |
+| `TYPES` | Operating System type | `['Windows', 'RHEL', 'Linux', SUSE]` |
+| `TENANCY` | AWS Tenancy | `['Shared', 'Dedicated']` |
+
 
 ### Requirements
 ```sh
