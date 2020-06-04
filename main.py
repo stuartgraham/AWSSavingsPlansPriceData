@@ -14,7 +14,7 @@ LOOKUP_CODE = False
 PLAN_LENGTH = [1,3]
 # PLAN_COMMIT: [A]ll Upfront, [N]o Upfront, [P]artial Upfront                               
 PLAN_COMMIT = ['A','N']
-# REGION: https://github.com/adv4000/aws-region-codes            
+# REGION: https://github.com/jsonmaur/aws-regions          
 REGIONS = ['eu-west-1', 'eu-west-2']
 TYPES = ['Windows', 'RHEL', 'Linux']
 TENANCY = ['Shared', 'Dedicated']
