@@ -6,15 +6,14 @@ Manipulate settings as needed
 
 | Settings | Description | Inputs |
 | :----: | --- | --- |
-| `CSVFILE` | xlsx file name | `savings-plans.xlsx` |
-| `CSV_PER_TAB` | Per Instance Family price tabs | `True/False` |
+| `CSV_FILE` | xlsx file name | `savings-plans.xlsx` |
+| `FAMILY_PER_TAB` | Per Instance Family price tabs | `True/False` |
 | `LOOKUP_CODE` | Concatenated code for VLOOKUP | `True/False` |
-| `PLANLENGTH` | Savings Plans Years | `[1,3]` |
-| `PLANCOMMIT` | Commitment [A]ll, [N]o, [P]artial Upfront | `['A','N','P']` |
+| `PLAN_LENGTH` | Savings Plans Years | `[1,3]` |
+| `PLAN_COMMIT` | Commitment [A]ll, [N]o, [P]artial Upfront | `['A','N','P']` |
 | `REGIONS` | AWS Region code | `['eu-west-1', 'eu-west-2']` |
 | `TYPES` | Operating System type | `['Windows', 'RHEL', 'Linux', SUSE]` |
 | `TENANCY` | AWS Tenancy | `['Shared', 'Dedicated']` |
-
 
 ### Requirements
 ```sh

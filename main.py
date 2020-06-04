@@ -7,27 +7,27 @@ import collections
 from concurrent.futures import ThreadPoolExecutor
 
 # SETTINGS
-# CSVFILE: Path to CSV File
-CSVFILE = 'savings-plans.xlsx'
-CSV_PER_TAB = True
+# CSV_FILE: Path to CSV File
+CSV_FILE = 'savings-plans.xlsx'
+FAMILY_PER_TAB = True
 LOOKUP_CODE = False
-# PLANLENGTH: 1 year, 3 years
-PLANLENGTH = [1,3]
-# PLANCOMMIT: [A]ll Upfront, [N]o Upfront, [P]artial Upfront                               
-PLANCOMMIT = ['A','N']
+# PLAN_LENGTH: 1 year, 3 years
+PLAN_LENGTH = [1,3]
+# PLAN_COMMIT: [A]ll Upfront, [N]o Upfront, [P]artial Upfront                               
+PLAN_COMMIT = ['A','N']
 # REGION: https://github.com/adv4000/aws-region-codes            
 REGIONS = ['eu-west-1', 'eu-west-2']
 TYPES = ['Windows', 'RHEL', 'Linux']
 TENANCY = ['Shared', 'Dedicated']
 
 #FIXED URL
-BASEURL = "https://view-publish.us-west-2.prod.pricing.aws.a2z.com/pricing/2.0/meteredUnitMaps/computesavingsplan/USD/current/compute-savings-plan-ec2"
-ENDURL = "index.json?timestamp="
+BASE_URL = "https://view-publish.us-west-2.prod.pricing.aws.a2z.com/pricing/2.0/meteredUnitMaps/computesavingsplan/USD/current/compute-savings-plan-ec2"
+END_URL = "index.json?timestamp="
 
 def get_plans():
     plans = []
-    for _L in PLANLENGTH:
-        for _C in PLANCOMMIT:
+    for _L in PLAN_LENGTH:
+        for _C in PLAN_COMMIT:
             plans.append("{}{}".format(int(_L,),_C))
     return plans
 
@@ -49,7 +49,7 @@ def construct_urls():
                         S = "{} year/{}".format(str(_S[0]),v)
                 
                 for X in TENANCY:
-                    URLS.append((_R, "{}/{}/{}/{}/{}/{}{}".format(BASEURL, S, R, T, X, ENDURL, TIMESTAMP)))
+                    URLS.append((_R, "{}/{}/{}/{}/{}/{}{}".format(BASE_URL, S, R, T, X, END_URL, TIMESTAMP)))
 
     print("Working on {} URLS".format(len(URLS)))
     return URLS
@@ -106,7 +106,7 @@ def get_json(in_url):
             entry.update({"spcode" : spcode})
 
         # Tabulate Excel if True
-        if CSV_PER_TAB == True:
+        if FAMILY_PER_TAB == True:
             xls_tab = instance[0]
         else:
             xls_tab = 'All'
@@ -120,7 +120,7 @@ def get_json(in_url):
  
 
 def xlwriter(response_dict):
-    workbook = xlsxwriter.Workbook(CSVFILE)
+    workbook = xlsxwriter.Workbook(CSV_FILE)
 
     bold = workbook.add_format({'bold': True})
     money = workbook.add_format({'num_format': '$#,##0.0000'})
