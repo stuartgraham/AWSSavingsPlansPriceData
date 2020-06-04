@@ -33,7 +33,7 @@ def get_plans():
 def construct_urls():
     URLS = []
     TIMESTAMP = str(int(time.time()))
-    SPPRICES = get_plans()
+    #SPPRICES = get_plans()
     for _R in REGIONS:
         for k,v in aws.regions.items():
             if _R == k:
@@ -146,6 +146,8 @@ def xlwriter(response_dict):
     workbook.close()
 
 def main():
+    global SPPRICES
+    SPPRICES = get_plans()
     print("\nRegions - {}".format(', '.join(map(str, REGIONS))))
     print("OS - {}".format(', '.join(map(str, TYPES))))
     print("Tenancy - {}".format(', '.join(map(str, TENANCY))))
