@@ -7,21 +7,30 @@ import xlsxwriter
 import collections
 from concurrent.futures import ThreadPoolExecutor
 
-#GLOBALS
+# SETTINGS
 CSVFILE = 'savings-plans.xlsx'
+PLANLENGTH = [1,3]                              # 1 year, 3 years
+PLANCOMMIT = ['A','N']                          # [A]ll Upfront, [N]o Upfront, [P]artial Upfront
 REGIONS = ['eu-west-1', 'eu-west-2']
 TYPES = ['Windows', 'RHEL', 'Linux']
-SPPRICES = ['1YALL', '1YNO', '3YALL', '3YNO']  # add 1YPA and 3YPA for partials
 TENANCY = ['Shared', 'Dedicated']
 
 #FIXED URL
 BASEURL = "https://view-publish.us-west-2.prod.pricing.aws.a2z.com/pricing/2.0/meteredUnitMaps/computesavingsplan/USD/current/compute-savings-plan-ec2"
 ENDURL = "index.json?timestamp="
 
+def get_plans():
+    plans = []
+    for _L in PLANLENGTH:
+        for _C in PLANCOMMIT:
+            plans.append("{}{}".format(int(_L,),_C))
+    return plans
+
 
 def construct_urls():
     URLS = []
     TIMESTAMP = str(int(time.time()))
+    SPPRICES = get_plans()
     for _R in REGIONS:
         for k,v in aws.regions.items():
             if _R == k:
@@ -31,7 +40,7 @@ def construct_urls():
             for _S in SPPRICES:
                 _S = list(_S)
                 for k,v in aws.commit.items():
-                    if _S[2] == k:
+                    if _S[1] == k:
                         S = "{} year/{}".format(str(_S[0]),v)
                 
                 for X in TENANCY:
@@ -42,7 +51,6 @@ def construct_urls():
 
 
 def get_json(in_url):
-    time.sleep(1)
     (_region, in_url) = in_url
     response = requests.get(in_url)
     working_data = response.json()
