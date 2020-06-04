@@ -5,7 +5,8 @@ Outputs AWS Savings Plans Data to Microsoft Excel based on region, OS, tenancy a
 Parameters
 ```sh
 CSVFILE = 'savings-plans.xlsx'
-CSV_PER_TAB = False
+CSV_PER_TAB = True
+LOOKUP_CODE = False
 PLANLENGTH = [1,3]                              # 1 year, 3 years
 PLANCOMMIT = ['A','N']                          # [A]ll Upfront, [N]o Upfront, [P]artial Upfront
 REGIONS = ['eu-west-1', 'eu-west-2']

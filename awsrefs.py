@@ -25,10 +25,10 @@ regions = {
 "us-gov-east-1":"GovCloud (US-East)",
 "us-gov-west-1":"GovCloud (US-West)",
 "TBD":"Asia Pacific (Jakarta)",
-"TBD":"Bahrain",
-"TBD":"Cape Town",
-"TBD":"Hong Kong SAR",
-"TBD":"Milan"
+"me-south-1":"Middle East (Bahrain)",
+"af-south-1	":"Africa (Cape Town)",
+"ap-east-1":"Asia Pacific (Hong Kong)",
+"eu-south-1":"Europe (Milan)"
 }
 
 os = {

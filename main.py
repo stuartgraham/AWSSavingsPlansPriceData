@@ -10,6 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 # CSVFILE: Path to CSV File
 CSVFILE = 'savings-plans.xlsx'
 CSV_PER_TAB = False
+LOOKUP_CODE = True
 # PLANLENGTH: 1 year, 3 years
 PLANLENGTH = [1,3]
 # PLANCOMMIT: [A]ll Upfront, [N]o Upfront, [P]artial Upfront                               
@@ -94,13 +95,15 @@ def get_json(in_url):
         entrykey = instance+spcode
         entry = {"instance": instance,
                 "region": spregion,
-                 "os": operatingsystem,
-                 "tenancy": tenancy,
-                 "commitcode": commitcode,
-                 "odrate": "{:0.4f}".format(float(odrate)),
-                 "sprate": sprate,
-                 "savingper": "{:0.2f}".format(savingper)
+                "os": operatingsystem,
+                "tenancy": tenancy,
+                "commitcode": commitcode,
+                "odrate": "{:0.4f}".format(float(odrate)),
+                "sprate": sprate,
+                "savingper": "{:0.2f}".format(savingper),
                  }
+        if LOOKUP_CODE == True:
+            entry.update({"spcode" : spcode})
 
         # Tabulate Excel if True
         if CSV_PER_TAB == True:
@@ -136,6 +139,8 @@ def xlwriter(response_dict):
         worksheet.write(row, column + 5, "odrate", bold)
         worksheet.write(row, column + 6, "sprate", bold)
         worksheet.write(row, column + 7, "% Saving", bold)
+        if LOOKUP_CODE == True:
+            worksheet.write(row, column + 8, "lookup", bold)
 
         row = 1
         column = 0
@@ -149,6 +154,8 @@ def xlwriter(response_dict):
             worksheet.write(row, column + 5, _value["odrate"], money)
             worksheet.write(row, column + 6, _value["sprate"], money)
             worksheet.write(row, column + 7, _value["savingper"])
+            if LOOKUP_CODE == True:
+                worksheet.write(row, column + 8, _value["spcode"])
             row += 1
 
     workbook.close()
