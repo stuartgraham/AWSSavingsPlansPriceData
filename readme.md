@@ -14,6 +14,11 @@ TYPES = ['Windows', 'RHEL', 'Linux']
 TENANCY = ['Shared', 'Dedicated']
 ```
 
+| Settings | Inputs |
+| :----: | --- |
+| `CSVFILE` | xlsx file name e.g. `savings-plans.xlsx` |
+| `CSV_PER_TAB` | xlsx file name e.g. `True/False` |
+
 ### Requirements
 ```sh
 pip install -p requirements.txt

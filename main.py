@@ -9,8 +9,8 @@ from concurrent.futures import ThreadPoolExecutor
 # SETTINGS
 # CSVFILE: Path to CSV File
 CSVFILE = 'savings-plans.xlsx'
-CSV_PER_TAB = False
-LOOKUP_CODE = True
+CSV_PER_TAB = True
+LOOKUP_CODE = False
 # PLANLENGTH: 1 year, 3 years
 PLANLENGTH = [1,3]
 # PLANCOMMIT: [A]ll Upfront, [N]o Upfront, [P]artial Upfront                               
@@ -123,39 +123,36 @@ def xlwriter(response_dict):
     workbook = xlsxwriter.Workbook(CSVFILE)
 
     bold = workbook.add_format({'bold': True})
-    money = workbook.add_format({'num_format': '$#,##0'})
+    money = workbook.add_format({'num_format': '$#,##0.0000'})
 
     for key, value in response_dict.items():
+        # Create Worksheet
         worksheet = workbook.add_worksheet(key)
-
-        row = 0
-        column = 0
-
-        worksheet.write(row, column, "Instance", bold)
-        worksheet.write(row, column + 1, "region", bold)
-        worksheet.write(row, column + 2, "os", bold)
-        worksheet.write(row, column + 3, "tenancy", bold)
-        worksheet.write(row, column + 4, "commitcode", bold)
-        worksheet.write(row, column + 5, "odrate", bold)
-        worksheet.write(row, column + 6, "sprate", bold)
-        worksheet.write(row, column + 7, "% Saving", bold)
+        # Add Header Row
+        worksheet.write(0, 0, "Instance", bold)
+        worksheet.write(0, 1, "region", bold)
+        worksheet.write(0, 2, "os", bold)
+        worksheet.write(0, 3, "tenancy", bold)
+        worksheet.write(0, 4, "commitcode", bold)
+        worksheet.write(0, 5, "odrate", bold)
+        worksheet.write(0, 6, "sprate", bold)
+        worksheet.write(0, 7, "% Saving", bold)
         if LOOKUP_CODE == True:
-            worksheet.write(row, column + 8, "lookup", bold)
+            worksheet.write(0, 8, "lookup", bold)
 
+        # Iterate Rows
         row = 1
-        column = 0
-
         for _key, _value in value.items():
-            worksheet.write(row, column, _value["instance"])
-            worksheet.write(row, column + 1, _value["region"])
-            worksheet.write(row, column + 2, _value["os"])
-            worksheet.write(row, column + 3, _value["tenancy"])
-            worksheet.write(row, column + 4, _value["commitcode"])
-            worksheet.write(row, column + 5, _value["odrate"], money)
-            worksheet.write(row, column + 6, _value["sprate"], money)
-            worksheet.write(row, column + 7, _value["savingper"])
+            worksheet.write(row, 0, _value["instance"])
+            worksheet.write(row, 1, _value["region"])
+            worksheet.write(row, 2, _value["os"])
+            worksheet.write(row, 3, _value["tenancy"])
+            worksheet.write(row, 4, _value["commitcode"])
+            worksheet.write_number(row, 5, float(_value["odrate"]), money)
+            worksheet.write_number(row, 6, float(_value["sprate"]), money)
+            worksheet.write_number(row, 7, float(_value["savingper"]))
             if LOOKUP_CODE == True:
-                worksheet.write(row, column + 8, _value["spcode"])
+                worksheet.write(row, 8, _value["spcode"])
             row += 1
 
     workbook.close()
@@ -178,4 +175,4 @@ start = time.time()
 response_dict = collections.OrderedDict()
 main()
 stop = time.time()
-print("\nRuntime {:0.2f}\n".format(stop-start))
+print("\nRuntime {:0.2f}s\n".format(stop-start))
