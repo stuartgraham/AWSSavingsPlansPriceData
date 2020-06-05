@@ -1,4 +1,5 @@
 *.xlsx
+!template.xlsx
 __pycache__/
 Pipfile
 Pipfile.lock
