@@ -1,5 +1,7 @@
 import time
 import requests
+import os
+import shutil
 from pprint import pprint
 import awsrefs as aws
 import settings
@@ -9,6 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 FAMILY_PER_TAB = settings.FAMILY_PER_TAB
 LOOKUP_CODE = settings.LOOKUP_CODE
+RI_INPUT_TEMPLATE = settings.RI_INPUT_TEMPLATE
 PLAN_TYPE = settings.PLAN_TYPE
 INSTANCE_FAMILY = settings.INSTANCE_FAMILY
 PLAN_LENGTH = settings.PLAN_LENGTH
@@ -114,7 +117,7 @@ def get_json(in_url):
             if FAMILY_PER_TAB == True:
                 xls_tab = instance[0]
             else:
-                xls_tab = 'All'
+                xls_tab = 'SavingsPlans'
 
             if xls_tab not in response_dict:
                 response_dict[xls_tab] = collections.OrderedDict()
@@ -126,7 +129,15 @@ def get_json(in_url):
 def xlwriter(response_dict):
     ''' Write to XSLX '''
     xls_file = "{}-savings-plans.xlsx".format(PLAN_TYPE.lower())
-    workbook = xlsxwriter.Workbook(xls_file)
+    if RI_INPUT_TEMPLATE == True:
+        if os.path.exists(xls_file):
+            os.remove(xls_file)
+        shutil.copyfile('template.xlsx', xls_file)
+    else:
+        workbook = xlsxwriter.Workbook(xls_file)
+
+    #worksheet = workbook.get_worksheet_by_name('Sheet1')
+
     bold = workbook.add_format({'bold': True})
     money = workbook.add_format({'num_format': '$#,##0.0000'})
 
