@@ -8,8 +8,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 # SETTINGS
 # XLS SETTINGS
-FAMILY_PER_TAB = True
-LOOKUP_CODE = False
+FAMILY_PER_TAB = False
+LOOKUP_CODE = True
 
 # PLAN SETTINGS
 PLAN_TYPE = 'compute'
@@ -135,31 +135,30 @@ def xlwriter(response_dict):
     for k, v in response_dict.items():
         # Create Worksheet
         worksheet = workbook.add_worksheet(k)
+
         # Add Header Row
-        worksheet.write(0, 0, "instance", bold)
-        worksheet.write(0, 1, "region", bold)
-        worksheet.write(0, 2, "os", bold)
-        worksheet.write(0, 3, "tenancy", bold)
-        worksheet.write(0, 4, "commitcode", bold)
-        worksheet.write(0, 5, "odrate", bold)
-        worksheet.write(0, 6, "sprate", bold)
-        worksheet.write(0, 7, "% Saving", bold)
-        if LOOKUP_CODE == True:
-            worksheet.write(0, 8, "lookup", bold)
+        header_row = ["instance", "region", "os", "tenancy", "commitcode", "lookup", "odrate", "sprate", "% Saving"]
+        if LOOKUP_CODE == False:
+            header_row.remove("lookup")
+        
+        for i, e in enumerate(header_row):
+            worksheet.write(0, i, e, bold)
 
         # Iterate Rows
         row = 1
         for k, v in v.items():
-            worksheet.write(row, 0, v["instance"])
-            worksheet.write(row, 1, v["region"])
-            worksheet.write(row, 2, v["os"])
-            worksheet.write(row, 3, v["tenancy"])
-            worksheet.write(row, 4, v["commitcode"])
-            worksheet.write_number(row, 5, float(v["odrate"]), money)
-            worksheet.write_number(row, 6, float(v["sprate"]), money)
-            worksheet.write_number(row, 7, float(v["savingper"]))
+            
+            content_row = [v["instance"], v["region"], v["os"], v["tenancy"], v["commitcode"]]
             if LOOKUP_CODE == True:
-                worksheet.write(row, 8, v["spcode"])
+                content_row.append(v["spcode"])
+
+            for i, e in enumerate(content_row):
+                worksheet.write(row, i, e)
+                col = i
+
+            worksheet.write_number(row, col+1, float(v["odrate"]), money)
+            worksheet.write_number(row, col+2, float(v["sprate"]), money)
+            worksheet.write_number(row, col+3, float(v["savingper"]))
             row += 1
     workbook.close()
 
