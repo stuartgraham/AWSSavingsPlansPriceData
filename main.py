@@ -73,10 +73,10 @@ def get_json(in_url):
             rate = v
             tenancy = rate['ec2:Tenancy']
             instance = rate['ec2:InstanceType']
-            spregion = rate['ec2:Location']
+            sp_region = rate['ec2:Location']
             for k,v in aws.regions.items():
-                if spregion == v:
-                    spregion = k
+                if sp_region == v:
+                    sp_region, sp_region_code = v, k
 
             operatingsystem = rate['ec2:OperatingSystem']
             for k,v in aws.os.items():
@@ -93,12 +93,13 @@ def get_json(in_url):
 
             sprate = rate['price']
             odrate = rate['ec2:PricePerUnit']
-            spcode = "{}-{}-{}-{}-{}".format(instance, spregion, operatingsystem, tenancy, commitcode)
+            spcode = "{}-{}-{}-{}-{}".format(instance, sp_region, operatingsystem, tenancy, commitcode)
             savingper = ((float(odrate)-float(sprate))/float(odrate))*100
 
             entry_key = instance+spcode
             entry = {"instance": instance,
-                    "region": spregion,
+                    "region": sp_region,
+                    "regioncode": sp_region_code,
                     "os": operatingsystem,
                     "tenancy": tenancy,
                     "commitcode": commitcode,
@@ -134,7 +135,7 @@ def xlwriter(response_dict):
         worksheet = workbook.add_worksheet(k)
 
         # Add Header Row
-        header_row = ["instance", "region", "os", "tenancy", "commitcode", "lookup", "odrate", "sprate", "% Saving"]
+        header_row = ["instance", "region", "regioncode", "os", "tenancy", "commitcode", "lookup", "odrate", "sprate", "% Saving"]
         if LOOKUP_CODE == False:
             header_row.remove("lookup")
         
@@ -145,7 +146,7 @@ def xlwriter(response_dict):
         row = 1
         for k, v in v.items():
             
-            content_row = [v["instance"], v["region"], v["os"], v["tenancy"], v["commitcode"]]
+            content_row = [v["instance"], v["region"], v["regioncode"], v["os"], v["tenancy"], v["commitcode"]]
             if LOOKUP_CODE == True:
                 content_row.append(v["spcode"])
 
