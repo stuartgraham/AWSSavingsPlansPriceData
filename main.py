@@ -6,6 +6,7 @@ from pprint import pprint
 import awsrefs as aws
 import settings
 import xlsxwriter
+import openpyxl as xl
 import collections
 from concurrent.futures import ThreadPoolExecutor
 
@@ -128,16 +129,7 @@ def get_json(in_url):
 
 def xlwriter(response_dict):
     ''' Write to XSLX '''
-    xls_file = "{}-savings-plans.xlsx".format(PLAN_TYPE.lower())
-    if RI_INPUT_TEMPLATE == True:
-        if os.path.exists(xls_file):
-            os.remove(xls_file)
-        shutil.copyfile('template.xlsx', xls_file)
-    else:
-        workbook = xlsxwriter.Workbook(xls_file)
-
-    #worksheet = workbook.get_worksheet_by_name('Sheet1')
-
+    workbook = xlsxwriter.Workbook('temp.xlsx')
     bold = workbook.add_format({'bold': True})
     money = workbook.add_format({'num_format': '$#,##0.0000'})
 
@@ -171,6 +163,26 @@ def xlwriter(response_dict):
             row += 1
     workbook.close()
 
+def merge_spreadsheets():
+    xls_file = "{}-savings-plans.xlsx".format(PLAN_TYPE.lower())
+    
+    if RI_INPUT_TEMPLATE == True:
+        if os.path.exists(xls_file):
+            os.remove(xls_file)
+        shutil.copyfile('template.xlsx', xls_file)
+        in_xls = 'temp.xlsx'
+        out_xls = xls_file
+        wb1 = xl.load_workbook(filename=in_xls)
+        ws1 = wb1.worksheets[0]
+        wb2 = xl.load_workbook(filename=out_xls)
+        ws2 = wb2['SavingsPlans']
+        for row in ws1:
+            for cell in row:
+                ws2[cell.coordinate].value = cell.value
+        wb2.save(out_xls)
+    else:
+        os.rename('temp.xlsx', xls_file)
+        
 
 def main():
     ''' Main entry point of the app '''
@@ -185,6 +197,7 @@ def main():
         executor.map(get_json, working_urls, timeout=30)
 
     xlwriter(response_dict)
+    merge_spreadsheets()
 
 
 if __name__ == "__main__":
