@@ -2,23 +2,20 @@ import time
 import requests
 from pprint import pprint
 import awsrefs as aws
+import settings
 import xlsxwriter
 import collections
 from concurrent.futures import ThreadPoolExecutor
 
-# SETTINGS
-# XLS SETTINGS
-FAMILY_PER_TAB = False
-LOOKUP_CODE = True
-
-# PLAN SETTINGS
-PLAN_TYPE = 'compute'
-INSTANCE_FAMILY = []
-PLAN_LENGTH = [1,3]                           
-PLAN_COMMIT = ['A','N']      
-REGIONS = ['eu-west-1', 'eu-west-2']
-OSES = ['Windows', 'RHEL', 'Linux']
-TENANCY = ['Shared', 'Dedicated']
+FAMILY_PER_TAB = settings.FAMILY_PER_TAB
+LOOKUP_CODE = settings.LOOKUP_CODE
+PLAN_TYPE = settings.PLAN_TYPE
+INSTANCE_FAMILY = settings.INSTANCE_FAMILY
+PLAN_LENGTH = settings.PLAN_LENGTH
+PLAN_COMMIT = settings.PLAN_COMMIT
+REGIONS = settings.REGIONS
+OSES = settings.OSES
+TENANCY = settings.TENANCY
 
 #FIXED URL
 BASE_URL = "https://view-publish.us-west-2.prod.pricing.aws.a2z.com/pricing/2.0/meteredUnitMaps/computesavingsplan/USD/current/"
