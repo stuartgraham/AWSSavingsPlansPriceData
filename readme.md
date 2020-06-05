@@ -1,7 +1,7 @@
 # AWS Savings Plans Price Data
 Outputs AWS Savings Plans price to Microsoft Excel file based on region, OS, tenancy and term parameters. Supports EC2 and Compute Savings Plans (EC2 Only)
 
-### main.py
+### settings.py
 Manipulate settings as needed
 
 | Settings | Description | Inputs |
