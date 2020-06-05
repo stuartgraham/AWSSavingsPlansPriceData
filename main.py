@@ -10,9 +10,6 @@ import openpyxl as xl
 import collections
 from concurrent.futures import ThreadPoolExecutor
 
-FAMILY_PER_TAB = settings.FAMILY_PER_TAB
-LOOKUP_CODE = settings.LOOKUP_CODE
-RI_INPUT_TEMPLATE = settings.RI_INPUT_TEMPLATE
 PLAN_TYPE = settings.PLAN_TYPE
 INSTANCE_FAMILY = settings.INSTANCE_FAMILY
 PLAN_LENGTH = settings.PLAN_LENGTH
@@ -26,6 +23,19 @@ BASE_URL = "https://view-publish.us-west-2.prod.pricing.aws.a2z.com/pricing/2.0/
 MID_URLS = {'compute':"compute-savings-plan-ec2",'ec2':"instance-savings-plan-ec2"}
 END_URL = "index.json?timestamp="
 
+
+def file_settings_overrides():
+    global FAMILY_PER_TAB
+    FAMILY_PER_TAB = settings.FAMILY_PER_TAB
+    global LOOKUP_CODE
+    LOOKUP_CODE = settings.LOOKUP_CODE
+    global RI_INPUT_TEMPLATE
+    RI_INPUT_TEMPLATE = settings.RI_INPUT_TEMPLATE
+    if RI_INPUT_TEMPLATE == True and FAMILY_PER_TAB == True:
+        print("\nBoth FAMILY_PER_TAB and RI_INPUT_TEMPLATE set to true, favouring RI_INPUT_TEMPLATE")
+    if RI_INPUT_TEMPLATE == True:
+        LOOKUP_CODE = True
+        FAMILY_PER_TAB = False
 
 def get_terms():
     '''Manipulates the PLAN_LENGTH and PLAN_COMMIT inputs'''
@@ -164,11 +174,12 @@ def xlwriter(response_dict):
     workbook.close()
 
 def merge_spreadsheets():
+    ''' Merges Excel Spreadsheets '''
     xls_file = "{}-savings-plans.xlsx".format(PLAN_TYPE.lower())
+    if os.path.exists(xls_file):
+        os.remove(xls_file)
     
     if RI_INPUT_TEMPLATE == True:
-        if os.path.exists(xls_file):
-            os.remove(xls_file)
         shutil.copyfile('template.xlsx', xls_file)
         in_xls = 'temp.xlsx'
         out_xls = xls_file
@@ -182,10 +193,13 @@ def merge_spreadsheets():
         wb2.save(out_xls)
     else:
         os.rename('temp.xlsx', xls_file)
+    if os.path.exists('temp.xlsx'):
+            os.remove('temp.xlsx')
         
 
 def main():
     ''' Main entry point of the app '''
+    file_settings_overrides()
     get_terms()
     print("\nRegions - {}".format(', '.join(map(str, REGIONS))))
     print("OS - {}".format(', '.join(map(str, OSES))))

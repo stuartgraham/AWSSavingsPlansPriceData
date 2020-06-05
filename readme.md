@@ -8,6 +8,7 @@ Manipulate settings as needed
 | :----: | --- | --- |
 | `FAMILY_PER_TAB` | Per Instance Family price tabs | `True/False` |
 | `LOOKUP_CODE` | Concatenated code for VLOOKUP | `True/False` |
+| `RI_INPUT_TEMPLATE` | Creates RI Import Template | `True/False` |
 | `PLAN_TYPE` | Compute or EC2 Savings Plans | `compute` or `ec2` |
 | `INSTANCE_FAMILY` | Instance Families | `['m5', 'c5']` |
 | `PLAN_LENGTH` | Savings Plans Years | `[1,3]` |
