@@ -106,6 +106,7 @@ def get_json(in_url):
             commitcode = commityear + commitamount
 
             sprate = rate['price']
+            sprate_annual = float(sprate)*8760
             odrate = rate['ec2:PricePerUnit']
             spcode = "{}-{}-{}-{}-{}".format(instance, sp_region, operatingsystem, tenancy, commitcode)
             savingper = ((float(odrate)-float(sprate))/float(odrate))*100
@@ -120,6 +121,7 @@ def get_json(in_url):
                     "odrate": "{:0.4f}".format(float(odrate)),
                     "sprate": sprate,
                     "savingper": "{:0.2f}".format(savingper),
+                    "sprate_annual": "{:0.2f}".format(sprate_annual)
                     }
             if LOOKUP_CODE == True:
                 entry.update({"spcode" : spcode})
@@ -142,13 +144,14 @@ def xlwriter(response_dict):
     workbook = xlsxwriter.Workbook('temp.xlsx')
     bold = workbook.add_format({'bold': True})
     money = workbook.add_format({'num_format': '$#,##0.0000'})
+    money2 = workbook.add_format({'num_format': '$#,##0.00'})
 
     for k, v in response_dict.items():
         # Create Worksheet
         worksheet = workbook.add_worksheet(k)
 
         # Add Header Row
-        header_row = ["instance", "region", "regioncode", "os", "tenancy", "commitcode", "lookup", "odrate", "sprate", "% Saving"]
+        header_row = ["instance", "region", "regioncode", "os", "tenancy", "commitcode", "lookup", "odrate", "sprate", "% Saving", "sprate_annual"]
         if LOOKUP_CODE == False:
             header_row.remove("lookup")
         
@@ -159,7 +162,13 @@ def xlwriter(response_dict):
         row = 1
         for k, v in v.items():
             
-            content_row = [v["instance"], v["region"], v["regioncode"], v["os"], v["tenancy"], v["commitcode"]]
+            content_row = [v["instance"], 
+                            v["region"], 
+                            v["regioncode"], 
+                            v["os"], 
+                            v["tenancy"], 
+                            v["commitcode"]
+                            ]
             if LOOKUP_CODE == True:
                 content_row.append(v["spcode"])
 
@@ -170,6 +179,7 @@ def xlwriter(response_dict):
             worksheet.write_number(row, col+1, float(v["odrate"]), money)
             worksheet.write_number(row, col+2, float(v["sprate"]), money)
             worksheet.write_number(row, col+3, float(v["savingper"]))
+            worksheet.write_number(row, col+4, float(v["sprate_annual"]), money2)
             row += 1
     workbook.close()
 
