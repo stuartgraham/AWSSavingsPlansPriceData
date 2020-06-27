@@ -36,11 +36,11 @@ os = {
 "Red Hat Enterprise Linux":"RHEL",
 "SUSE":"SUSE",
 "Windows":"Windows",
-"Windows with SQL Enterprise":"Windows with SQL Enterprise",
-"Windows with SQL Standard":"Windows with SQL Standard",
+"Windows with SQL Enterprise":"Windows with SQL Ent",
+"Windows with SQL Standard":"Windows with SQL Std",
 "Windows with SQL Web":"Windows with SQL Web",
-"Linux with SQL Enterprise":"Linux with SQL Enterprise",
-"Linux with SQL Standard":"Linux with SQL Standard",
+"Linux with SQL Enterprise":"Linux with SQL Ent",
+"Linux with SQL Standard":"Linux with SQL Std",
 "Linux with SQL Web":"Linux with SQL Web",
 "BYOL":"BYOL"
 }
