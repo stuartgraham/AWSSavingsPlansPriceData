@@ -19,7 +19,7 @@ Manipulate settings as needed
 
 ### Requirements
 ```sh
-pip install -p requirements.txt
+pip install -r requirements.txt
 ```
 
 ### Execution 
