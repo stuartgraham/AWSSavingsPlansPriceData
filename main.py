@@ -92,7 +92,7 @@ def get_json(in_url):
                 if sp_region == v:
                     sp_region, sp_region_code = v, k
 
-            operatingsystem = rate['ec2:OperatingSystem']
+            operatingsystem = rate['plc:OS']
             for k,v in aws.os.items():
                 if operatingsystem == v:
                     operatingsystem = k
